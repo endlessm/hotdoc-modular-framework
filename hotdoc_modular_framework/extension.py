@@ -1,4 +1,5 @@
 from hotdoc.core import extension
+from hotdoc.utils import loggable
 
 _DESCRIPTION = '''
 Output documentation for Endless's modular framework for offline apps.
@@ -7,9 +8,10 @@ app-description YAML.
 '''
 
 
-class HmfExtension(extension.Extension):
+class HmfExtension(extension.Extension, loggable.Logger):
     extension_name = 'hotdoc_modular_framework'
     argument_prefix = 'mf'
+    log_domain = 'modular-framework'
 
     def __init__(self, app, project):
         super().__init__(app, project)
@@ -19,6 +21,20 @@ class HmfExtension(extension.Extension):
         group = parser.add_argument_group('Modular framework', _DESCRIPTION)
         HmfExtension.add_index_argument(group)
         HmfExtension.add_sources_argument(group)
+
+    def setup(self):
+        """
+        Overrides Extension.setup(), this is where any updated source files are
+        scanned.
+        """
+        super().setup()
+
+        stale, unlisted = self.get_stale_files(self.sources)
+        if not stale:
+            self.info('Nothing to do', self.log_domain)
+            return
+
+        self.info('Refreshing {} files'.format(len(stale)), self.log_domain)
 
 
 def get_extension_classes():
