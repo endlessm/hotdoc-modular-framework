@@ -1,5 +1,9 @@
+import json
+import subprocess
+
 from hotdoc.core import extension
 from hotdoc.utils import loggable
+from . import introspector
 
 _DESCRIPTION = '''
 Output documentation for Endless's modular framework for offline apps.
@@ -35,6 +39,14 @@ class HmfExtension(extension.Extension, loggable.Logger):
             return
 
         self.info('Refreshing {} files'.format(len(stale)), self.log_domain)
+
+        ispect = introspector.Introspector(self)
+
+        for f in stale:
+            data = subprocess.check_output(['introspect', '--file', f],
+                universal_newlines=True)
+            info = json.loads(data)
+            ispect.create_symbols(info, f)
 
 
 def get_extension_classes():
