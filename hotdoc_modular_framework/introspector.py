@@ -18,6 +18,48 @@ _WHITELIST_PROPERTIES = {
 }
 
 
+def _merge_comments(target, source, prefer_source=True):
+    """Utility function to merge two Comment instances together."""
+
+    props = ['title', 'params', 'topics', 'filename', 'line_offset',
+        'col_offset', 'initial_col_offset', 'annotations', 'description',
+        'short_description', 'extension_attrs', 'tags', 'raw_comment']
+    for prop in props:
+        # Overwrite target if property not present
+        if not hasattr(target, prop) and hasattr(source, prop):
+            setattr(target, prop, getattr(source, prop))
+            continue
+
+        # Overwrite target if property is default value (0, empty string)
+        if not hasattr(source, prop):
+            continue
+        target_prop = getattr(target, prop)
+        source_prop = getattr(source, prop)
+        if not target_prop and source_prop:
+            setattr(target, prop, source_prop)
+            continue
+
+        if prefer_source and source_prop:
+            setattr(target, prop, source_prop)
+
+    # Do the same thing for props whose default value is -1
+    for prop in ['lineno', 'endlineno']:
+        if not hasattr(target, prop) and hasattr(source, prop):
+            setattr(target, prop, getattr(source, prop))
+            continue
+
+        if not hasattr(source, prop):
+            continue
+        target_prop = getattr(target, prop)
+        source_prop = getattr(source, prop)
+        if target_prop == -1 and source_prop != -1:
+            setattr(target, prop, source_prop)
+            continue
+
+        if prefer_source and source_prop != -1:
+            setattr(target, prop, source_prop)
+
+
 class Introspector:
     """
     This analyzes the JSON introspection info obtained from a module, and
@@ -82,5 +124,9 @@ class Introspector:
         doc.title = util.create_text_subcomment(doc, name)
         doc.short_description = util.create_text_subcomment(doc,
             info['short_desc'])
+
+        existing_comment = self.database.get_comment(unique_name)
+        if existing_comment:
+            _merge_comments(doc, existing_comment)
 
         self.database.add_comment(doc)
