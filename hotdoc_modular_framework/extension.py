@@ -3,7 +3,7 @@ import subprocess
 
 from hotdoc.core import extension
 from hotdoc.utils import loggable
-from . import comment_scanner, introspector
+from . import comment_scanner, formatter, introspector
 
 _DESCRIPTION = '''
 Output documentation for Endless's modular framework for offline apps.
@@ -19,6 +19,8 @@ class HmfExtension(extension.Extension, loggable.Logger):
 
     def __init__(self, app, project):
         super().__init__(app, project)
+
+        self.formatter = formatter.HmfFormatter(self.app.link_resolver)
 
     @staticmethod
     def add_arguments(parser):
