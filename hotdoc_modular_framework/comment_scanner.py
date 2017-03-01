@@ -2,13 +2,25 @@ import collections
 import os.path
 import re
 
-from hotdoc.core import comment
+from hotdoc.core import comment, exceptions
+from hotdoc.utils import loggable
 from . import util
 
 _FIND_COMMENT = re.compile(r'/\*\*(.+?)\*/', re.DOTALL)
 
 _MatchedComment = collections.namedtuple('_MatchedComment',
     ['body', 'start', 'end'])
+
+
+class _CommentScannerException(exceptions.HotdocSourceException):
+    """Warnings with which the comment scanner diagnoses stuff that should be
+    corrected in the source."""
+    pass
+
+loggable.Logger.register_warning_code('missing-class-comment',
+    _CommentScannerException, 'modular-framework')
+loggable.Logger.register_warning_code('redundant-namespace',
+    _CommentScannerException, 'modular-framework')
 
 
 def _process_line(line):
@@ -44,7 +56,7 @@ def _consume_blanks(lines):
     return bool(lines)
 
 
-class Scanner:
+class Scanner(loggable.Logger):
     """
     Takes care of extracting all the documentation comments from a source file.
     """
@@ -66,9 +78,26 @@ class Scanner:
                 namespace = _demodulize(os.path.basename(
                     os.path.dirname(com.filename)))
                 com.name = '{}.{}'.format(namespace, symbol_name)
+
+                if symbol_name.startswith(namespace + '.'):
+                    self.warn('redundant-namespace',
+                        message=('Redundant namespace {} in class comment'
+                            .format(namespace)),
+                        filename=com.filename, lineno=com.lineno)
+
                 com.title = util.create_text_subcomment(com, com.name)
                 self._current_class = com.name
             else:
+                if self._current_class is None:
+                    self.warn('missing-class-comment',
+                        message='Missing class comment', filename=com.filename,
+                        lineno=com.lineno)
+
+                    namespace = _demodulize(os.path.basename(os.path.dirname(
+                        com.filename)))
+                    classname = _demodulize(os.path.basename(com.filename[:-3]))
+                    self._current_class = '{}.{}'.format(namespace, classname)
+
                 com.name = '{}:{}'.format(self._current_class, symbol_name)
                 com.title = util.create_text_subcomment(com, symbol_name)
 
