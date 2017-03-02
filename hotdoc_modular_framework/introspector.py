@@ -117,7 +117,10 @@ class Introspector:
 
         self.extension.get_or_create_symbol(symbols.PropertySymbol,
             unique_name=unique_name,
-            display_name=name, filename=self._filename, prop_type=type_symbol)
+            display_name=name, filename=self._filename, prop_type=type_symbol,
+            extra={
+                'default': info['default'],
+            })
 
         doc = comment.Comment(name=unique_name, filename=self._filename,
             description=info['long_desc'])
