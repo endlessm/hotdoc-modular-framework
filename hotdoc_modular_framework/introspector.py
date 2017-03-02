@@ -93,6 +93,9 @@ class Introspector:
         for s in info['slots']:
             self._process_slot(s, name)
 
+        for r in info['references']:
+            self._process_reference(r, name)
+
         # Done with this file
         self._filename = None
 
@@ -146,3 +149,12 @@ class Introspector:
         self.extension.get_or_create_symbol(symbol.SlotSymbol,
             unique_name=unique_name, display_name=name, filename=self._filename,
             is_multi=info['multi'], is_array=info['array'])
+
+    def _process_reference(self, info, module_name):
+        """Create symbols for reference info from introspection."""
+
+        name = info['name']
+        unique_name = '{}:{}'.format(module_name, name)
+
+        self.extension.get_or_create_symbol(symbol.ReferenceSymbol,
+            unique_name=unique_name, display_name=name, filename=self._filename)

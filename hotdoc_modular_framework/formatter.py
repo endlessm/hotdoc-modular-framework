@@ -19,10 +19,13 @@ class HmfFormatter(formatter.Formatter):
         # FIXME Private API: https://github.com/hotdoc/hotdoc/issues/96
         self._symbol_formatters.update({
             symbols.PropertySymbol: self._format_property_symbol,
+            symbol.ReferenceSymbol: self._format_reference_symbol,
             symbol.SlotSymbol: self._format_slot_symbol,
         })
         self._ordering.insert(self._ordering.index(symbols.PropertySymbol) + 1,
             symbol.SlotSymbol)
+        self._ordering.insert(self._ordering.index(symbol.SlotSymbol) + 1,
+            symbol.ReferenceSymbol)
 
     def _format_property_symbol(self, prop):
         """Render modular framework property template."""
@@ -50,5 +53,16 @@ class HmfFormatter(formatter.Formatter):
             'symbol': slot,
             'slot': slot,
             'slot_name': slot.link.title,
+        })
+        return res, False
+
+    def _format_reference_symbol(self, reference):
+        """Render modular framework reference template."""
+
+        template = self.engine.get_template('reference.html')
+        res = template.render({
+            'symbol': reference,
+            'reference': reference,
+            'reference_name': reference.link.title,
         })
         return res, False

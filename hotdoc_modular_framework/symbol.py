@@ -22,3 +22,17 @@ class SlotSymbol(symbols.Symbol):
         self.is_multi = kwargs.pop('multi', False)
         self.is_array = kwargs.pop('array', False)
         super().__init__(**kwargs)
+
+
+class ReferenceSymbol(symbols.Symbol):
+    """Modules can have references to other modules. Unlike slots, which create
+    the modules on demand, a reference points to a module that exists elsewhere
+    in the module tree."""
+
+    # Sqlalchemy magic
+    __tablename__ = 'references'
+    id_ = sql.Column(sql.Integer, sql.ForeignKey('symbols.id_'),
+        primary_key=True)
+    __mapper_args__ = {
+        'polymorphic_identity': 'references'
+    }
