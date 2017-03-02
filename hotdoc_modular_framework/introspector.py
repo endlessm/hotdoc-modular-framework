@@ -1,5 +1,5 @@
 from hotdoc.core import comment, symbols
-from . import util
+from . import symbol, util
 
 _WHITELIST_TYPES = ['Number', 'String', 'Boolean',
     'GtkAlign', 'GtkJustification', 'GtkOrientation', 'GtkStackTransitionType',
@@ -90,6 +90,9 @@ class Introspector:
         for p in info['properties']:
             self._process_property(p, name)
 
+        for s in info['slots']:
+            self._process_slot(s, name)
+
         # Done with this file
         self._filename = None
 
@@ -133,3 +136,13 @@ class Introspector:
             _merge_comments(doc, existing_comment)
 
         self.database.add_comment(doc)
+
+    def _process_slot(self, info, module_name):
+        """Create symbols for slot info from introspection."""
+
+        name = info['name']
+        unique_name = '{}:{}'.format(module_name, name)
+
+        self.extension.get_or_create_symbol(symbol.SlotSymbol,
+            unique_name=unique_name, display_name=name, filename=self._filename,
+            is_multi=info['multi'], is_array=info['array'])

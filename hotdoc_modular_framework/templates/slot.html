@@ -1,0 +1,22 @@
+@require(slot, slot_name)
+@extends('base_symbol.html')
+
+@def header():
+<h3 class="method">
+    <span><code>@slot_name</code></span>
+</h3>
+@end
+@def content():
+@slot.formatted_doc
+
+@if slot.is_multi or slot.is_array:
+<dl>
+@if slot.is_multi:
+  <dt>Multi</dt><dd>yes</dd>
+@end
+@if slot.is_array:
+  <dt>Array</dt><dd>yes</dd>
+@end
+</dl>
+@end
+@end
