@@ -1,0 +1,21 @@
+@require(property, property_name, property_type, extra)
+@extends('base_symbol.html')
+
+@def header():
+<h3 class="method">
+    <span><code>@property_name</code></span>
+</h3>
+@end
+@def content():
+@property.formatted_doc
+
+@if extra:
+\
+@for name, ex in extra.items():
+<dl>
+    <dd>@name</dd>
+    <dt>@ex</dt>
+</dl>
+@end
+@end
+@end
