@@ -16,7 +16,6 @@ class HmfFormatter(formatter.Formatter):
 
         super().__init__(extension, searchpath)
 
-        # FIXME Private API: https://github.com/hotdoc/hotdoc/issues/96
         self._symbol_formatters.update({
             symbols.PropertySymbol: self._format_property_symbol,
             symbol.ReferenceSymbol: self._format_reference_symbol,
@@ -30,7 +29,6 @@ class HmfFormatter(formatter.Formatter):
     def _format_property_symbol(self, prop):
         """Render modular framework property template."""
 
-        # FIXME Private API: https://github.com/hotdoc/hotdoc/issues/96
         type_link = self._format_linked_symbol(prop.prop_type)
         template = self.engine.get_template('property.html')
         res = template.render({
