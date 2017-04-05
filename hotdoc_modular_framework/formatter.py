@@ -10,11 +10,11 @@ class HmfFormatter(formatter.Formatter):
     render modular framework documentation the way we want it rendered.
     """
 
-    def __init__(self, link_resolver):
+    def __init__(self, extension):
         module_path = os.path.dirname(__file__)
         searchpath = [os.path.join(module_path, 'templates')]
 
-        super().__init__(link_resolver, searchpath)
+        super().__init__(extension, searchpath)
 
         # FIXME Private API: https://github.com/hotdoc/hotdoc/issues/96
         self._symbol_formatters.update({

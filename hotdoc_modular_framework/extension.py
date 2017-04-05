@@ -20,7 +20,7 @@ class HmfExtension(extension.Extension, loggable.Logger):
     def __init__(self, app, project):
         super().__init__(app, project)
 
-        self.formatter = formatter.HmfFormatter(self.app.link_resolver)
+        self.formatter = formatter.HmfFormatter(self)
 
     @staticmethod
     def add_arguments(parser):
