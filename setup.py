@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright 2017 Endless Mobile, Inc.
 
@@ -7,9 +8,9 @@ from setuptools import setup, find_packages
 with open(os.path.join('hotdoc_modular_framework', 'VERSION.txt'), 'r') as _:
     VERSION = _.read().strip()
 
-setup(name='hotdoc_modular_framework',
+setup(name='hotdoc-modular-framework',
     version=VERSION, keywords="gjs modular-framework hotdoc",
-    url='https://github.com/endlessm/hotdoc_modular_framework',
+    url='https://github.com/endlessm/hotdoc-modular-framework',
     author_email='philip@endlessm.com',
     license='LGPLv2.1+',
     description=('An extension for Hotdoc to generate documentation for '
