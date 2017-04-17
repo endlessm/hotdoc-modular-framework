@@ -16,6 +16,7 @@ Package: python3-hotdoc-modular-framework
 Architecture: all
 Provides: ${python3:Provides}
 Depends: ${python3:Depends}, ${misc:Depends}
+Recommends: eos-knowledge-0-bin
 XB-Python-Versions: ${python3:Versions}
 Description: Hotdoc modular framework extension
  An extension for Hotdoc to generate documentation for

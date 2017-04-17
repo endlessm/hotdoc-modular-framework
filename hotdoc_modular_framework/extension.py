@@ -28,6 +28,20 @@ class HmfExtension(extension.Extension, loggable.Logger):
         HmfExtension.add_index_argument(group)
         HmfExtension.add_sources_argument(group)
 
+        HmfExtension.add_path_argument(group, 'introspect-utility',
+            help_=('Path to the "introspect" utility from eos-knowledge-lib '
+                '(if absent, look for it in PATH)'))
+
+    def parse_config(self, config):
+        """
+        Overrides Extension.parse_config(), this is where we handle any custom
+        command line arguments.
+        """
+        super().parse_config(config)
+
+        if self.introspect_utility is None:
+            self.introspect_utility = 'introspect'  # look up in PATH
+
     def setup(self):
         """
         Overrides Extension.setup(), this is where any updated source files are
@@ -49,8 +63,8 @@ class HmfExtension(extension.Extension, loggable.Logger):
             for comment in scanner.scan(f):
                 self.app.database.add_comment(comment)
 
-            data = subprocess.check_output(['introspect', '--file', f],
-                universal_newlines=True)
+            data = subprocess.check_output([self.introspect_utility, '--file',
+                f], universal_newlines=True)
             info = json.loads(data)
             ispect.create_symbols(info, f)
 
