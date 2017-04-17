@@ -125,7 +125,7 @@ class Scanner(loggable.Logger):
         source = ''
         self._linenos = [0]
 
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             line = f.readline()
             while line:
                 self._linenos.append(f.tell())
