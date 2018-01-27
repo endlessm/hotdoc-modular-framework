@@ -148,7 +148,8 @@ class Introspector:
 
         self.extension.get_or_create_symbol(symbol.SlotSymbol,
             unique_name=unique_name, display_name=name, filename=self._filename,
-            is_multi=info['multi'], is_array=info['array'])
+            is_multi=info['multi'], is_array=info['array'],
+            is_optional=info['optional'], allowed_modules=info['allowed'])
 
     def _process_reference(self, info, module_name):
         """Create symbols for reference info from introspection."""

@@ -17,10 +17,14 @@ class SlotSymbol(symbols.Symbol):
 
     is_multi = sql.Column(sql.Boolean)
     is_array = sql.Column(sql.Boolean)
+    is_optional = sql.Column(sql.Boolean)
+    allowed_modules = sql.Column(sql.PickleType)
 
     def __init__(self, **kwargs):
         self.is_multi = kwargs.pop('multi', False)
         self.is_array = kwargs.pop('array', False)
+        self.is_optional = kwargs.pop('is_optional', False)
+        self.allowed_modules = kwargs.pop('allowed_modules', [])
         super().__init__(**kwargs)
 
 
