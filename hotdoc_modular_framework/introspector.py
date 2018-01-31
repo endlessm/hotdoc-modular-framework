@@ -4,8 +4,9 @@ from . import symbol, util
 _WHITELIST_TYPES = ['Number', 'String', 'Boolean',
     'GtkAlign', 'GtkJustification', 'GtkOrientation', 'GtkStackTransitionType',
     'PangoEllipsizeMode', 'PangoWrapMode']
-_BLACKLIST_ORIGINS = ['Gjs_Module', 'GtkActionable', 'GtkActivatable',
-    'GtkButton', 'GtkContainer', 'GtkGrid', 'GtkWindow']
+_BLACKLIST_ORIGINS = ['EosWindow', 'Gjs_Module', 'GtkActionable',
+    'GtkActivatable', 'GtkApplicationWindow', 'GtkButton', 'GtkContainer',
+    'GtkGrid', 'GtkWindow']
 _WHITELIST_PROPERTIES = {
     'GtkEntry': ['max-length', 'max-width-chars', 'placeholder-text',
         'width-chars'],
@@ -15,6 +16,9 @@ _WHITELIST_PROPERTIES = {
     'GtkStack': ['transition-duration', 'transition-type'],
     'GtkWidget': ['expand', 'halign', 'hexpand', 'orientation', 'valign',
         'vexpand'],
+}
+_BLACKLIST_PROPERTIES = {
+    'Window.Simple': ['expand', 'halign', 'hexpand', 'valign', 'vexpand'],
 }
 
 
@@ -117,6 +121,9 @@ class Introspector:
         if (origin in _WHITELIST_PROPERTIES and
             name not in _WHITELIST_PROPERTIES[origin]):
             return
+        if (module_name in _BLACKLIST_PROPERTIES and
+            name in _BLACKLIST_PROPERTIES[module_name]):
+            return
 
         type_symbol = symbols.QualifiedSymbol(type_tokens=type_name)
         unique_name = '{}:{}'.format(module_name, name)
@@ -148,7 +155,8 @@ class Introspector:
 
         self.extension.get_or_create_symbol(symbol.SlotSymbol,
             unique_name=unique_name, display_name=name, filename=self._filename,
-            is_multi=info['multi'], is_array=info['array'])
+            is_multi=info['multi'], is_array=info['array'],
+            is_optional=info['optional'], allowed_modules=info['allowed'])
 
     def _process_reference(self, info, module_name):
         """Create symbols for reference info from introspection."""

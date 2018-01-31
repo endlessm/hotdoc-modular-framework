@@ -9,14 +9,27 @@
 @def content():
 @slot.formatted_doc
 
-@if slot.is_multi or slot.is_array:
 <dl>
+  <dt>Required</dt>
+  <dd>
+@if slot.is_optional:
+    no
+@else:
+    yes
+@end
+  </dd>
 @if slot.is_multi:
   <dt>Multi</dt><dd>yes</dd>
 @end
 @if slot.is_array:
   <dt>Array</dt><dd>yes</dd>
 @end
-</dl>
+@if slot.allowed_modules:
+  <dt>Allowed modules</dt>
+  <dd>
+@for module in slot.allowed_modules:
+    <a href="@{module.split('.')[0][0].lower()}@{module.split('.')[0][1:]}/@{module.split('.')[1][0].lower()}@{module.split('.')[1][1:]}.html"><code>@module</code></a>
 @end
+  </dd>
+</dl>
 @end
